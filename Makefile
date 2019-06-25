@@ -1,5 +1,5 @@
 PKG_NAME := partd
-URL = https://files.pythonhosted.org/packages/75/c5/8f152e9f40024c9018e160734cd147636e2babc1cb9f253f953c603b1cbc/partd-0.3.10.tar.gz
+URL = https://files.pythonhosted.org/packages/87/d4/de6094b60d4714db31b47a2a2df3a6620a81645ca894bbeec028b4a5acf8/partd-1.0.0.tar.gz
 ARCHIVES = 
 
 include ../common/Makefile.common
