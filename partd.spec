@@ -4,7 +4,7 @@
 #
 Name     : partd
 Version  : 1.0.0
-Release  : 7
+Release  : 8
 URL      : https://files.pythonhosted.org/packages/87/d4/de6094b60d4714db31b47a2a2df3a6620a81645ca894bbeec028b4a5acf8/partd-1.0.0.tar.gz
 Source0  : https://files.pythonhosted.org/packages/87/d4/de6094b60d4714db31b47a2a2df3a6620a81645ca894bbeec028b4a5acf8/partd-1.0.0.tar.gz
 Summary  : Appendable key-value storage
