@@ -4,7 +4,7 @@
 #
 Name     : partd
 Version  : 1.1.0
-Release  : 15
+Release  : 16
 URL      : https://files.pythonhosted.org/packages/ad/94/1cdbd9c7196656dc7b40139a6c26650af111bb4095442b0be06e5636a536/partd-1.1.0.tar.gz
 Source0  : https://files.pythonhosted.org/packages/ad/94/1cdbd9c7196656dc7b40139a6c26650af111bb4095442b0be06e5636a536/partd-1.1.0.tar.gz
 Summary  : Appendable key-value storage
@@ -26,135 +26,26 @@ BuildRequires : pyzmq
 BuildRequires : toolz
 
 %description
-PartD
 =====
-
-|Build Status| |Version Status|
-
-Key-value byte store with appendable values
-
-    Partd stores key-value pairs.
-    Values are raw bytes.
-    We append on old values.
-
-Partd excels at shuffling operations.
-
-Operations
-----------
-
-PartD has two main operations, ``append`` and ``get``.
-
-
-Example
--------
-
-1.  Create a Partd backed by a directory::
-
-        >>> import partd
-        >>> p = partd.File('/path/to/new/dataset/')
-
-2.  Append key-byte pairs to dataset::
-
-        >>> p.append({'x': b'Hello ', 'y': b'123'})
-        >>> p.append({'x': b'world!', 'y': b'456'})
-
-3.  Get bytes associated to keys::
-
-        >>> p.get('x')         # One key
-        b'Hello world!'
-
-        >>> p.get(['y', 'x'])  # List of keys
-        [b'123456', b'Hello world!']
-
-4.  Destroy partd dataset::
-
-        >>> p.drop()
-
-That's it.
-
-
-Implementations
----------------
-
-We can back a partd by an in-memory dictionary::
-
-    >>> p = Dict()
-
-For larger amounts of data or to share data between processes we back a partd
-by a directory of files.  This uses file-based locks for consistency.::
-
-    >>> p = File('/path/to/dataset/')
-
-However this can fail for many small writes.  In these cases you may wish to buffer one partd with another, keeping a fixed maximum of data in the buffering partd.  This writes the larger elements of the first partd to the second partd when space runs low::
-
-    >>> p = Buffer(Dict(), File(), available_memory=2e9)  # 2GB memory buffer
-
-You might also want to have many distributed process write to a single partd
-consistently.  This can be done with a server
-
-*   Server Process::
-
-        >>> p = Buffer(Dict(), File(), available_memory=2e9)  # 2GB memory buffer
-        >>> s = Server(p, address='ipc://server')
-
-*   Worker processes::
-
-        >>> p = Client('ipc://server')  # Client machine talks to remote server
-
-
-Encodings and Compression
--------------------------
-
-Once we can robustly and efficiently append bytes to a partd we consider
-compression and encodings.  This is generally available with the ``Encode``
-partd, which accepts three functions, one to apply on bytes as they are
-written, one to apply to bytes as they are read, and one to join bytestreams.
-Common configurations already exist for common data and compression formats.
-
-We may wish to compress and decompress data transparently as we interact with a
-partd.  Objects like ``BZ2``, ``Blosc``, ``ZLib`` and ``Snappy`` exist and take
-another partd as an argument.::
-
-    >>> p = File(...)
-    >>> p = ZLib(p)
-
-These work exactly as before, the (de)compression happens automatically.
-
-Common data formats like Python lists, numpy arrays, and pandas
-dataframes are also supported out of the box.::
-
-    >>> p = File(...)
-    >>> p = NumPy(p)
-    >>> p.append({'x': np.array([...])})
-
-This lets us forget about bytes and think instead in our normal data types.
-
-Composition
------------
-
-In principle we want to compose all of these choices together
-
-1.  Write policy:  ``Dict``, ``File``, ``Buffer``, ``Client``
-2.  Encoding:  ``Pickle``, ``Numpy``, ``Pandas``, ...
-3.  Compression:  ``Blosc``, ``Snappy``, ...
-
-Partd objects compose by nesting.  Here we make a partd that writes pickle
-encoded BZ2 compressed bytes directly to disk::
-
-    >>> p = Pickle(BZ2(File('foo')))
-
-We could construct more complex systems that include compression,
-serialization, buffering, and remote access.::
-
-    >>> server = Server(Buffer(Dict(), File(), available_memory=2e0))
-
-    >>> client = Pickle(Snappy(Client(server.address)))
-    >>> client.append({'x': [1, 2, 3]})
-
-.. |Build Status| image:: https://travis-ci.org/dask/partd.png
-   :target: https://travis-ci.org/dask/partd
-.. |Version Status| image:: https://img.shields.io/pypi/v/partd.svg
-   :target: https://pypi.python.org/pypi/partd/
+        
+        |Build Status| |Version Status|
+        
+        Key-value byte store with appendable values
+        
+            Partd stores key-value pairs.
+            Values are raw bytes.
+            We append on old values.
+        
+        Partd excels at shuffling operations.
+        
+        Operations
+        ----------
+        
+        PartD has two main operations, ``append`` and ``get``.
+        
+        
+        Example
+        -------
 
 %package license
 Summary: license components for the partd package.
@@ -178,6 +69,8 @@ Summary: python3 components for the partd package.
 Group: Default
 Requires: python3-core
 Provides: pypi(partd)
+Requires: pypi(locket)
+Requires: pypi(toolz)
 
 %description python3
 python3 components for the partd package.
@@ -192,15 +85,14 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1583200505
-# -Werror is for werrorists
+export SOURCE_DATE_EPOCH=1603397759
 export GCC_IGNORE_WERROR=1
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
 export NM=gcc-nm
 export CFLAGS="$CFLAGS -O3 -ffat-lto-objects -flto=4 "
-export FCFLAGS="$CFLAGS -O3 -ffat-lto-objects -flto=4 "
-export FFLAGS="$CFLAGS -O3 -ffat-lto-objects -flto=4 "
+export FCFLAGS="$FFLAGS -O3 -ffat-lto-objects -flto=4 "
+export FFLAGS="$FFLAGS -O3 -ffat-lto-objects -flto=4 "
 export CXXFLAGS="$CXXFLAGS -O3 -ffat-lto-objects -flto=4 "
 export MAKEFLAGS=%{?_smp_mflags}
 python3 setup.py build
